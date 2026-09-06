@@ -1,0 +1,23 @@
+<dialog class="auth-modal" id="{{ modal_id }}">
+    <form class="auth-modal__form" method="POST" action="{{ form_action }}" data-ajax-form>
+        <header class="auth-modal__header">
+            <h2 class="auth-modal__title">{{ title }}</h2>
+            <button class="auth-modal__close" type="button" data-dialog-close>×</button>
+        </header>
+
+        <p class="form-error" data-form-error hidden></p>
+
+        <p class="auth-modal__field">
+            <label for="{{ modal_id }}-username">Username</label>
+            <input type="text" id="{{ modal_id }}-username" name="user_name" maxlength="20" required>
+        </p>
+        <p class="auth-modal__field">
+            <label for="{{ modal_id }}-password">Password</label>
+            <input type="password" id="{{ modal_id }}-password" name="password" required>
+        </p>
+
+        <footer class="auth-modal__footer">
+            <button class="auth-modal__submit" type="submit">{{ title }}</button>
+        </footer>
+    </form>
+</dialog>

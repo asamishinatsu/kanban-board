@@ -1,0 +1,43 @@
+<dialog class="form-modal" id="{{ modal_id }}">
+    <form class="form-modal__form" method="POST" action="{{ form_action }}">
+        <header class="form-modal__header">
+            <h2 class="form-modal__title">{{ title }}</h2>
+            <button class="form-modal__close" type="button" data-dialog-close>×</button>
+        </header>
+
+        <p class="form-modal__field">
+            <label for="{{ modal_id }}-name">{{ name_label }}</label>
+            <input type="text" id="{{ modal_id }}-name" name="{{ name_field }}"
+                   value="{{ name_value or '' }}" required>
+        </p>
+
+        {% if show_description %}
+            <p class="form-modal__field">
+                <label for="{{ modal_id }}-description">Description (optional)</label>
+                <textarea id="{{ modal_id }}-description" name="board_description">{{ description_value or '' }}</textarea>
+            </p>
+        {% endif %}
+
+        {% if show_importance %}
+            <p class="form-modal__field">
+                <label for="{{ modal_id }}-importance">Priority</label>
+                <select id="{{ modal_id }}-importance" name="importance" required>
+                    <option value="low" {% if importance_value == 'low' %}selected{% endif %}>Low</option>
+                    <option value="medium" {% if importance_value == 'medium' %}selected{% endif %}>Medium</option>
+                    <option value="high" {% if importance_value == 'high' %}selected{% endif %}>High</option>
+                </select>
+            </p>
+        {% endif %}
+
+        {% if show_due_date %}
+            <p class="form-modal__field">
+                <label for="{{ modal_id }}-due-date">Due date (optional)</label>
+                <input type="date" id="{{ modal_id }}-due-date" name="due_date" value="{{ due_date_value or '' }}">
+            </p>
+        {% endif %}
+
+        <footer class="form-modal__footer">
+            <button class="form-modal__submit" type="submit">{{ submit_label or 'Create' }}</button>
+        </footer>
+    </form>
+</dialog>

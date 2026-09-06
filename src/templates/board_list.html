@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Boards — Kanban Board{% endblock %}
+
+{% block content %}
+    <h1 class="board-list__title">Boards</h1>
+
+    <section class="board-list__content">
+    {% if current_user.is_authenticated %}
+        
+        <button class="board-list__create-button" type="button" data-dialog-target="createBoardModal">+ New board</button>
+
+        <ul class="board-list__list">
+            {% for board in boards %}
+                <li class="board-list__item">
+                    <a href="{{ url_for('board_detail', board_id=board.board_id) }}" class="board-item">
+                        <h2 class="board-item__title">{{ board.board_name }}</h2>
+                        {% if board.board_description %}
+                            <p class="board-item__description">{{ board.board_description }}</p>
+                        {% endif %}
+                    </a>
+
+                    <div class="board-item__actions">
+                        <button type="button" data-dialog-target="editBoardModal-{{ board.board_id }}">Edit</button>
+
+                        <form method="POST" action="{{ url_for('delete_board', board_id=board.board_id) }}"
+                            data-confirm-delete="Delete this board and everything in it?">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </div>
+
+                    {% with modal_id='editBoardModal-' ~ board.board_id, title='Edit board',
+                            form_action=url_for('edit_board', board_id=board.board_id),
+                            name_label='Board name', name_field='board_name', show_description=true,
+                            name_value=board.board_name, description_value=board.board_description,
+                            submit_label='Save' %}
+                        {% include 'partials/create_modal.html' %}
+                    {% endwith %}
+                </li>
+            {% endfor %}
+        </ul>
+
+        {% with modal_id='createBoardModal', title='New board', form_action=url_for('create_board'),
+                name_label='Board name', name_field='board_name', show_description=true %}
+            {% include 'partials/create_modal.html' %}
+        {% endwith %}
+    {% else %}
+        <p class="board-list__message">Authorise to view your boards.</p>
+    {% endif %}
+    </section>
+{% endblock %}

@@ -1,0 +1,26 @@
+<header class="header">
+    <a class="header__logo" href="{{ url_for('board_list') }}">
+        <h1>KanbanBoard</h1>
+    </a>
+    <nav class="header__nav">
+        {% if current_user.is_authenticated %}
+            <div class="header__user-info">
+                <p class="header__greeting">Hello, {{ current_user.user_name }}!</p>
+                <a class="header__logout" href="{{ url_for('logout') }}">Log out</a>
+            </div>
+        {% else %}
+            <ul class="header__button-list">
+                <li><button type="button" class="header__button header__login-button" data-dialog-target="loginModal">Log In</button></li>
+                <li><button type="button" class="header__button header__signup-button" data-dialog-target="signupModal">Sign Up</button></li>
+            </ul>
+
+            {% with modal_id='loginModal', title='Log in', form_action=url_for('login') %}
+                {% include 'partials/auth_modal.html' %}
+            {% endwith %}
+
+            {% with modal_id='signupModal', title='Sign up', form_action=url_for('register') %}
+                {% include 'partials/auth_modal.html' %}
+            {% endwith %}
+        {% endif %}
+    </nav>
+</header>

@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ board.board_name }} — Kanban Board{% endblock %}
+
+{% block content %}
+    <a href="{{ url_for('board_list') }}">← Back to boards</a>
+
+    <h1 class="board-name">{{ board.board_name }}</h1>
+    {% if board.board_description %}
+        <p class="board-description">{{ board.board_description }}</p>
+    {% endif %}
+
+    <div class="board-columns">
+        {% for list in board.lists %}
+            <section class="board-column">
+                <header class="board-column__header">
+                    <h2 class="board-column__name">{{ list.list_name }}</h2>
+                    <button type="button" data-dialog-target="editListModal-{{ list.list_id }}">Edit</button>
+                    <form method="POST" action="{{ url_for('delete_list', list_id=list.list_id) }}"
+                          data-confirm-delete="Delete this list and its cards?">
+                        <button type="submit">×</button>
+                    </form>
+                </header>
+
+                {% with modal_id='editListModal-' ~ list.list_id, title='Edit list',
+                        form_action=url_for('edit_list', list_id=list.list_id),
+                        name_label='List name', name_field='list_name',
+                        name_value=list.list_name, submit_label='Save' %}
+                    {% include 'partials/create_modal.html' %}
+                {% endwith %}
+
+                <ul class="board-column__cards" data-list-id="{{ list.list_id }}">
+                    {% for card in list.cards %}
+                        <li class="card card-priority-{{ card.importance }}" data-card-id="{{ card.card_id }}">
+                            <p class="card__title">{{ card.card_title }}</p>
+                            {% if card.due_date %}
+                                <time datetime="{{ card.due_date.strftime('%Y-%m-%d') }}">
+                                    {{ card.due_date.strftime('%d.%m.%Y') }}
+                                </time>
+                            {% endif %}
+
+                            <button type="button" data-dialog-target="editCardModal-{{ card.card_id }}">Edit</button>
+                            <form method="POST" action="{{ url_for('delete_card', card_id=card.card_id) }}"
+                                  data-confirm-delete="Delete this card?">
+                                <button type="submit">×</button>
+                            </form>
+                        </li>
+
+                        {% with modal_id='editCardModal-' ~ card.card_id, title='Edit card',
+                                form_action=url_for('edit_card', card_id=card.card_id),
+                                name_label='Title', name_field='card_title', show_importance=true, show_due_date=true,
+                                name_value=card.card_title, importance_value=card.importance,
+                                due_date_value=card.due_date.strftime('%Y-%m-%d') if card.due_date else '',
+                                submit_label='Save' %}
+                            {% include 'partials/create_modal.html' %}
+                        {% endwith %}
+                    {% endfor %}
+                </ul>
+
+                <button type="button" data-dialog-target="createCardModal-{{ list.list_id }}">+ Add card</button>
+
+                {% with modal_id='createCardModal-' ~ list.list_id, title='New card',
+                        form_action=url_for('create_card', list_id=list.list_id),
+                        name_label='Title', name_field='card_title', show_importance=true, show_due_date=true %}
+                    {% include 'partials/create_modal.html' %}
+                {% endwith %}
+            </section>
+        {% endfor %}
+
+        <button type="button" data-dialog-target="createListModal">+ Add list</button>
+    </div>
+
+    {% with modal_id='createListModal', title='New list', form_action=url_for('create_list', board_id=board.board_id),
+            name_label='List name', name_field='list_name' %}
+        {% include 'partials/create_modal.html' %}
+    {% endwith %}
+{% endblock %}
